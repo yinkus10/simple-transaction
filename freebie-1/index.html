@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World</title>
+
+    <!-- Web3 CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"
+        integrity="sha512-+BhnLgfzIDDjssoEWHPmdgWRvbwIEdj0Xfiys7uSqfQWpMEOJ4ymJ88O6B1cB0j+4zjb5GhO+sb/kEicggvUQQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+<style>
+    body {
+        margin: 0;
+    }
+
+    .navbar {
+        background-color: #B9286B;
+        color: white;
+        font-weight: 600;
+        padding: 10px 20px;
+        font-size: 20px;
+    }
+
+    .input-1 {
+        outline: none;
+        border: 1px solid rgb(226, 226, 226);
+        border-radius: 5px;
+        width: 50%;
+        padding: 7px 10px;
+        font-size: 15px;
+        color: rgb(105, 105, 105);
+        display: block;
+        margin: 10px auto;
+    }
+
+    .button-1 {
+        margin-top: 5px;
+        padding: 7px;
+        font-size: 15px;
+        border: none;
+        color: white;
+        background-color: #B9286B;
+        border-radius: 7px;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .outer-div {
+        width: 400px;
+        height: 230px;
+        background-color: #29aae215;
+        padding: 10px;
+        margin: 10% auto;
+        text-align: center;
+        border-radius: 10px;
+    }
+</style>
+
+<header class="navbar">
+    Ether Sender <span style="float: right;" id="current_address">Active : </span>
+</header>
+
+<body>
+
+    <div class="outer-div">
+        <h2>Transfer Ethers</h2>
+        <input class="input-1" id="to_address" placeholder="receipant address">
+        <input class="input-1" id="amount" placeholder="amount to be sent">
+        <button class="button-1" onclick="send_eth()">
+            Send Ethers
+        </button>
+    </div>
+
+</body>
+
+<script>
+
+    var current_address, web3, connected;
+
+    var current_address_span = document.getElementById("current_address")
+
+    async function connect_to_metamask() {
+
+        // Modern DApp Browser
+        if (window.ethereum) {
+
+            web3 = new Web3(window.ethereum)
+
+            try {
+
+                ethereum.enable()
+
+                ethereum.request({
+                    method: 'eth_accounts',
+                }).then((result) => {
+                    current_address = result[0]
+                    current_address_span.innerHTML = `Active : ${current_address}` 
+                    console.log(current_address)
+                });
+
+                console.log("connected")
+
+                return true;
+
+            } catch (err) {
+
+                return false;
+
+            }
+            // For Legacy Browser
+        } else if (window.web3) {
+
+            window.web3 = new Web3(web3.currentProvider);
+
+            return true;
+
+        } else {
+
+            Alert("Please Install Metamask !");
+
+            return false;
+        }
+
+    }
+
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        connected = await connect_to_metamask();
+    });
+
+    async function send_eth() {
+
+        var to_add = document.getElementById("to_address").value
+        var amount = document.getElementById("amount").value
+
+        if (connected) {
+
+            web3.eth.sendTransaction({
+                from: `${current_address}`,
+                to: `${to_add}`,
+                value: `${web3.utils.toWei(amount, 'ether')}`
+            }, function (err, res) {
+                console.log(res)
+            });
+
+        }
+
+    }
+
+</script>
+
+</html>
